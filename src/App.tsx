@@ -73,6 +73,7 @@ export default function App() {
   const [grooveStyle, setGrooveStyle] = useState<
     "driving" | "tribal_accent" | "linear"
   >("driving");
+  const [showSequenceModifiers, setShowSequenceModifiers] = useState<boolean>(false);
 
   // Jitter Humanize config
   const [humanizeJitter, setHumanizeJitter] = useState<number>(0.08);
@@ -440,37 +441,39 @@ export default function App() {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(11,18,31,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(11,18,31,0.5)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none z-0 opacity-45" />
 
       {/* TANTRA 2 HEADER VIEW */}
-      <header className="relative z-10 w-full max-w-7xl mx-auto px-4 pt-5 pb-2 flex flex-col sm:flex-row items-center justify-between border-b border-[#111e30]/80">
+      <header className="relative z-10 w-full max-w-7xl mx-auto px-4 pt-5 pb-2 flex items-center justify-between border-b border-[#111e30]/80 gap-2">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-[0_0_15px_rgba(255,152,0,0.5)] border border-amber-400">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-[0_0_15px_rgba(255,152,0,0.5)] border border-amber-400 shrink-0">
             <Activity className="w-5 h-5 text-white animate-pulse" />
           </div>
           <div>
-            <h1 className="text-base font-extrabold tracking-widest uppercase text-white leading-none">
+            <h1 className="text-[12px] min-[380px]:text-sm sm:text-base font-extrabold tracking-widest uppercase text-white leading-none">
               TANTRA 2{" "}
               <span className="text-amber-500 font-medium">MPRG MODULATOR</span>
             </h1>
-            <p className="text-[10px] font-mono text-gray-400 tracking-wider uppercase mt-1">
+            <p className="text-[8px] sm:text-[10px] font-mono text-gray-400 tracking-wider uppercase mt-1 hidden min-[500px]:block">
               Algorithmic Preset Generator & Sequencer
             </p>
           </div>
         </div>
 
         {/* Action Header Nav */}
-        <div className="flex items-center gap-2 mt-3 sm:mt-0">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setShowHelpModal(true)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded bg-[#0f1724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-xs font-semibold uppercase tracking-wider transition-all"
+            title="Guide"
+            className="flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded bg-[#0f1724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-xs font-semibold uppercase tracking-wider transition-all"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
-            Guide
+            <HelpCircle className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-amber-500" />
+            <span className="hidden sm:inline">Guide</span>
           </button>
           <button
             onClick={() => setShowByteInspector(!showByteInspector)}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs font-semibold uppercase tracking-wider border transition-all ${showByteInspector ? "bg-amber-500 hover:bg-amber-600 text-black border-amber-400" : "bg-[#0f1724] hover:bg-[#1a2638] text-gray-300 border-[#20324c]"}`}
+            title="Byte View"
+            className={`flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded text-xs font-semibold uppercase tracking-wider border transition-all ${showByteInspector ? "bg-amber-500 hover:bg-amber-600 text-black border-amber-400" : "bg-[#0f1724] hover:bg-[#1a2638] text-gray-300 border-[#20324c]"}`}
           >
-            <Binary className="w-3.5 h-3.5" />
-            Byte View
+            <Binary className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">Byte View</span>
           </button>
         </div>
       </header>
@@ -482,99 +485,93 @@ export default function App() {
           <div className="absolute top-0 left-0 w-1/3 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-60" />
 
           {/* VST TOP BAR CONFIGS */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 border-b border-[#142337]/60">
-            {/* Display / Active Tab Indicator */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold px-3 py-1 bg-[#23354c]/50 text-white rounded uppercase tracking-wider border border-[#23354c]">
-                STEPS PANEL
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-3 mb-4 border-b border-[#142337]/60">
+            {/* Left element: Timing selector serving as title */}
+            <div className="flex items-center gap-2.5">
+              <span className="text-[10px] sm:text-[11px] font-extrabold text-gray-300 uppercase tracking-widest bg-[#152335]/50 border border-[#23354c] px-2.5 py-1 rounded">
+                TIMING
               </span>
-              <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
-                <span>SPEED:</span>
-                <span className="text-white font-bold">{speed}</span>
+              <div className="relative">
+                <select
+                  value={speed}
+                  onChange={(e) => {
+                    setSpeed(e.target.value);
+                    setModifiedParams((prev) => ({ ...prev, speed: true }));
+                  }}
+                  className="appearance-none bg-[#04070d] border border-[#1f2f48] text-[#ff9800] text-[11px] font-mono font-bold pl-3 pr-8 py-1 rounded focus:outline-none focus:border-amber-500 cursor-pointer text-center w-24 sm:w-28 h-[28px]"
+                >
+                  <option value="1/8">1/8</option>
+                  <option value="1/16">1/16</option>
+                  <option value="1/32">1/32</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-amber-500">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
               </div>
             </div>
 
-            {/* Quick Navigation Slider Indicators */}
-            <div className="flex items-center gap-2 bg-[#060a11] border border-[#16273d] p-1 rounded-md">
+            {/* Middle element: Mode Selector */}
+            <div className="flex items-center gap-1 bg-[#060a11] border border-[#16273d] p-1 rounded-md h-[34px]">
               <button
                 onClick={() => handleModeChange("gated", "G", true)}
-                className={`px-3 py-1 text-xs font-bold uppercase rounded transition-all ${activeEnvelopeTab === "G" ? "bg-amber-500 text-black font-extrabold shadow-[0_0_10px_rgba(255,152,0,0.3)]" : "text-gray-400 hover:text-white"}`}
+                className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded transition-all ${activeEnvelopeTab === "G" ? "bg-amber-500 text-black font-extrabold shadow-[0_0_10px_rgba(255,152,0,0.3)]" : "text-gray-400 hover:text-white"}`}
               >
                 GATE [G]
               </button>
               <button
                 onClick={() => handleModeChange("decay", "A", true)}
-                className={`px-3 py-1 text-xs font-bold uppercase rounded transition-all ${activeEnvelopeTab === "A" ? "bg-[#213a57] text-white border border-[#3b5e85]" : "text-gray-400 hover:text-white"}`}
+                className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded transition-all ${activeEnvelopeTab === "A" ? "bg-[#213a57] text-white border border-[#3b5e85]" : "text-gray-400 hover:text-white"}`}
               >
                 ENV [A]
               </button>
               <button
                 onClick={() => handleModeChange("decay", "B", true)}
-                className={`px-3 py-1 text-xs font-bold uppercase rounded transition-all ${activeEnvelopeTab === "B" ? "bg-[#213a57] text-white border border-[#3b5e85]" : "text-gray-400 hover:text-white"}`}
+                className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded transition-all ${activeEnvelopeTab === "B" ? "bg-[#213a57] text-white border border-[#3b5e85]" : "text-gray-400 hover:text-white"}`}
               >
                 ENV [B]
               </button>
+            </div>
+
+            {/* Right element: Tension Knob & Modifiers Toggle */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowSequenceModifiers(!showSequenceModifiers)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[10px] font-semibold uppercase tracking-wider border transition-all cursor-pointer h-[32px] ${
+                  showSequenceModifiers
+                    ? "bg-cyan-500 hover:bg-cyan-600 text-black border-cyan-400"
+                    : "bg-[#0f1724] hover:bg-[#1a2638] text-gray-300 border-[#20324c]"
+                }`}
+                title="Toggle Sequence Modifiers"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span className="hidden min-[400px]:inline">Modifiers</span>
+              </button>
+              <Knob
+                label="Tension"
+                value={tension}
+                min={1.0}
+                max={10.0}
+                defaultValue={4.4}
+                onChange={(val) => {
+                  setTension(val);
+                  setModifiedParams((prev) => ({ ...prev, tension: true }));
+                }}
+                formatValue={(v) => v.toFixed(2)}
+                color="amber"
+                disabled={mode === "gated"}
+                className="scale-90 origin-right"
+              />
             </div>
           </div>
 
           {/* MAIN VST PANEL CHASSIS */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-            {/* LEFT CONTROL COLUMN (12-col layout: 3 cols) */}
-            <div className="lg:col-span-3 flex flex-row lg:flex-col justify-around lg:justify-start items-center lg:items-stretch bg-[#070b12] border border-[#132135]/60 rounded-lg p-3 lg:py-4 gap-4 overflow-y-auto max-h-[500px]">
-              {/* SPEED CONTROLLER */}
-              <div className="flex flex-col items-center">
-                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  TIMING
-                </span>
-
-                {/* Speed selector dropdown */}
-                <div className="relative">
-                  <select
-                    value={speed}
-                    onChange={(e) => {
-                      setSpeed(e.target.value);
-                      setModifiedParams((prev) => ({ ...prev, speed: true }));
-                    }}
-                    className="appearance-none bg-[#04070d] border border-[#1f2f48] text-gray-300 text-[10px] font-mono font-bold px-3 py-1 rounded focus:outline-none focus:border-amber-500 cursor-pointer text-center w-24"
-                  >
-                    <option value="1/8">1/8</option>
-                    <option value="1/16">1/16</option>
-                    <option value="1/32">1/32</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* TENSION / DECAY BENDING KNOB */}
-              <div className="flex flex-col items-center">
-                {mode !== "gated" ? (
-                  <Knob
-                    label="Tension"
-                    value={tension}
-                    min={1.0}
-                    max={10.0}
-                    defaultValue={4.4}
-                    onChange={(val) => {
-                      setTension(val);
-                      setModifiedParams((prev) => ({ ...prev, tension: true }));
-                    }}
-                    formatValue={(v) => v.toFixed(2)}
-                    color="amber"
-                  />
-                ) : (
-                  <div className="text-center p-3 border border-[#1b2b41]/40 rounded bg-[#0b101b]/50 w-full hidden lg:block">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                      Shape Mode
-                    </span>
-                    <span className="text-[9px] font-mono text-amber-500/80 uppercase font-bold bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10">
-                      Gated Block
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* SEQUENCE MODIFIERS */}
-              <div className="hidden lg:flex flex-col gap-3 mt-2 pt-4 border-t border-[#1b2b41]/40">
-                <div className="flex items-center gap-2 mb-1">
+            {/* SEQUENCE MODIFIERS SIDEBAR (12-col layout: 3 cols, placed first on desktop and last on mobile) */}
+            {showSequenceModifiers && (
+              <div className="order-last lg:order-first lg:col-span-3 flex flex-col justify-start items-stretch bg-[#070b12] border border-[#132135]/60 rounded-lg p-4 gap-4">
+                <div className="flex items-center gap-2 mb-1 border-b border-[#1b2b41]/40 pb-2">
                   <Sliders className="w-3.5 h-3.5 text-cyan-400" />
                   <h2 className="text-[10px] font-bold uppercase tracking-wider text-white">
                     SEQUENCE Modifiers
@@ -582,12 +579,12 @@ export default function App() {
                 </div>
 
                 {/* MACRO DYNAMICS */}
-                <div className="bg-[#070b12] border border-[#1b2b41] p-2 rounded flex flex-col gap-2">
+                <div className="bg-[#05080e] border border-[#1b2b41]/40 p-2.5 rounded flex flex-col gap-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider">
                       EVOLUTION
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-amber-500 bg-black px-1 rounded">
+                    <span className="text-[9px] font-mono font-bold text-amber-500 bg-black px-1.5 py-0.5 rounded">
                       {evolution.toFixed(2)}
                     </span>
                   </div>
@@ -608,7 +605,7 @@ export default function App() {
                     <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider">
                       CHAOS
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-amber-500 bg-black px-1 rounded">
+                    <span className="text-[9px] font-mono font-bold text-amber-500 bg-black px-1.5 py-0.5 rounded">
                       {chaos.toFixed(2)}
                     </span>
                   </div>
@@ -648,12 +645,12 @@ export default function App() {
                 </div>
 
                 {/* HUMANIZER MUTATOR */}
-                <div className="bg-[#070b12] border border-[#1b2b41] p-2 rounded">
+                <div className="bg-[#05080e] border border-[#1b2b41]/40 p-2.5 rounded">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider">
                       JITTER
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-amber-500 bg-black px-1 rounded">
+                    <span className="text-[9px] font-mono font-bold text-amber-500 bg-black px-1.5 py-0.5 rounded">
                       ±{humanizeJitter.toFixed(3)}
                     </span>
                   </div>
@@ -674,28 +671,28 @@ export default function App() {
                 <div className="grid grid-cols-2 gap-1.5">
                   <button
                     onClick={shiftLeft}
-                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all"
+                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all cursor-pointer"
                   >
                     <ArrowLeft className="w-2.5 h-2.5 text-cyan-400" />
                     Shift L
                   </button>
                   <button
                     onClick={shiftRight}
-                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all"
+                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all cursor-pointer"
                   >
                     Shift R
                     <ArrowRight className="w-2.5 h-2.5 text-cyan-400" />
                   </button>
                   <button
                     onClick={invertPattern}
-                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all"
+                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all cursor-pointer"
                   >
                     <Sparkles className="w-2.5 h-2.5 text-amber-400" />
                     Invert
                   </button>
                   <button
                     onClick={reversePattern}
-                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all"
+                    className="flex items-center justify-center gap-1 py-1 rounded bg-[#101724] border border-[#20324c] hover:bg-[#1a2638] text-gray-300 text-[8px] font-bold uppercase tracking-wider transition-all cursor-pointer"
                   >
                     <RotateCcw className="w-2.5 h-2.5 text-purple-400" />
                     Reverse
@@ -712,10 +709,10 @@ export default function App() {
                   </button>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* CENTER SEQUENCER GRID COLUMN (12-col layout: 9 cols) */}
-            <div className="lg:col-span-9 flex flex-col justify-between gap-3">
+            {/* CENTER SEQUENCER GRID COLUMN (12-col layout: 9 cols or 12 cols, placed first on mobile) */}
+            <div className={`order-first lg:order-none ${showSequenceModifiers ? "lg:col-span-9" : "lg:col-span-12"} flex flex-col justify-between gap-3`}>
               {/* Interactive SVG Canvas */}
               <div className="flex-1 min-h-[260px] relative">
                 <SequencerGrid

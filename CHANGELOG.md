@@ -4,6 +4,19 @@ All notable changes to the **Tantra 2 MPRG Sequencer** project are documented he
 
 ---
 
+## [1.3.0] - 2026-07-13
+### Added
+- **Toggleable Sequence Modifiers Pane**: Implemented a collapsible and responsive side panel for the Sequence Modifiers, hidden by default. Added a specialized "Modifiers" toggle button with adaptive styling.
+- **Dynamic Tension Disabling**: The tension knob is now automatically locked and visually dimmed (reduced opacity, disabled cursor, and muted colors) during "Gated" mode, and dynamically lights up only when configuring decay envelopes.
+- **Continuous Sliding Drawing Gesture**: Rebuilt the Sequencer Grid interaction model to support ripple/slide drawing. Users can press down and slide horizontally to paint multiple steps in a single fluid swipe.
+- **Staircase Path Interpolation**: Improved vector step boundaries in the grid, ensuring drawing paths align perfectly with step borders without unwanted diagonal connections.
+
+### Refactored & Optimized
+- **Compact Timing Select UI**: Integrated the Timing speed selection dropdown into the main horizontal step-configuration bar to serve as both Timing label and action.
+- **Mobile Header Optimization**: Collapsed "Guide" and "Byte View" buttons into adaptive icon-only buttons on small viewports, ensuring a pristine mobile VST workspace.
+
+---
+
 ## [1.2.0] - 2026-07-13
 ### Added
 - Created a new modular `PresetSelector.tsx` component in `/src/components/` to handle the grid of preset buttons and display contextual, description-rich panels explaining how each algorithmic generator behaves.

@@ -32,14 +32,21 @@ A wide-ranging array of industry-standard algorithmic templates can be instantly
 - All selected parameters (Preset Style, Evolution, Chaos, Groove Style, Jitter) are queued up and computed **only when you click the prominent "GENERATE / RANDOMIZE" button**, providing an intentional and tactile workspace workflow.
 
 ### 4. Consolidated SEQUENCE Modifiers
-Conveniently located in the left sidebar control panel, the **SEQUENCE Modifiers** chassis aggregates:
+Conveniently accessible via the collapsible **Modifiers** toggle button, the **SEQUENCE Modifiers** pane can be hidden or shown at will (hidden by default). This provides a spacious workspace for dragging and drawing sequences on mobile devices. The panel aggregates:
 - **Evolution**: A macro-envelope ramp that evolves offbeat velocities smoothly across the 32 steps.
 - **Chaos**: High-resolution non-destructive micro-velocity jitter applied selectively to offbeats.
 - **Groove Style Selector**: Switch structural baselines between *Driving*, *Tribal Accent*, and *Linear*.
 - **Jitter (Humanizer)**: Controlled micro-timing or random amplitude variations to prevent ear fatigue.
 - **Quick Shift Tools**: Shift steps left or right, invert the volume peaks, or reverse the entire sequence timeline.
 
-### 5. Native Exporter
+### 5. Responsive Mobile Workspace & Advanced Drawing Gestures
+- **Collapsible Sidebar**: Hide the modifier controls to focus completely on the 32-step sequence canvas.
+- **Continuous Slide Gesture (Ripple Drawing)**: Click/touch and slide horizontally to draw or paint continuous steps in a single fluid gesture.
+- **Staircase Interpolation**: Step modifications now snap with brick/staircase alignment, preventing diagonal paths during fast gestures.
+- **Dynamic Tension Dimming**: The **Tension** knob is visually dimmed and locked during "Gated" mode, and comes alive with custom glow colors when editing decay or envelope modes.
+- **Dense Adaptive Layouts**: Custom headers and control groupings that seamlessly adapt to any viewport size, hiding text labels for secondary items on mobile while preserving full functionality.
+
+### 6. Native Exporter
 - Downloads fully serialized and compliant binary `.mprg` files.
 - Integrates seamlessly into the Tantra 2 VST's presets folder.
 

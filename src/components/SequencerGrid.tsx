@@ -166,10 +166,44 @@ export const SequencerGrid: React.FC<SequencerGridProps> = ({
       snappedTiming = Math.round(rawTiming * 4) / 4;
     }
 
-    // Keep node strictly bounded by neighbors to maintain chronological order
-    const minTiming = idx === 0 ? 0.0 : steps[idx - 1].timing;
-    const maxTiming = idx === totalSteps - 1 ? 1.0 : steps[idx + 1].timing;
-    const finalTiming = Math.max(minTiming, Math.min(maxTiming, snappedTiming));
+    // Ripple / Cascade Horizontal Drag logic (Tantra Native Feature)
+    const prevTiming = steps[idx].timing;
+    let tempTimings = steps.map(s => s.timing);
+    tempTimings[idx] = snappedTiming;
+
+    if (snappedTiming > prevTiming) {
+      // Dragging right: cascade rightward
+      for (let i = idx + 1; i < totalSteps; i++) {
+        if (tempTimings[i] < tempTimings[i - 1]) {
+          tempTimings[i] = tempTimings[i - 1];
+        }
+      }
+      // Respect global boundary layout (cap final node at 1.0)
+      if (tempTimings[totalSteps - 1] > 1.0) {
+        tempTimings[totalSteps - 1] = 1.0;
+        for (let i = totalSteps - 2; i >= idx; i--) {
+          if (tempTimings[i] > tempTimings[i + 1]) {
+            tempTimings[i] = tempTimings[i + 1];
+          }
+        }
+      }
+    } else if (snappedTiming < prevTiming) {
+      // Dragging left: cascade leftward
+      for (let i = idx - 1; i >= 0; i--) {
+        if (tempTimings[i] > tempTimings[i + 1]) {
+          tempTimings[i] = tempTimings[i + 1];
+        }
+      }
+      // Respect global boundary layout (cap start node at 0.0)
+      if (tempTimings[0] < 0.0) {
+        tempTimings[0] = 0.0;
+        for (let i = 1; i <= idx; i++) {
+          if (tempTimings[i] < tempTimings[i - 1]) {
+            tempTimings[i] = tempTimings[i - 1];
+          }
+        }
+      }
+    }
 
     // Calculate value (Y)
     const clampY = Math.max(0, Math.min(graphHeight, relativeY - padding));
@@ -177,11 +211,18 @@ export const SequencerGrid: React.FC<SequencerGridProps> = ({
     const finalValue = Math.max(0.0, Math.min(1.0, Number(value.toFixed(4))));
 
     // Update state
-    const newSteps = [...steps];
-    newSteps[idx] = {
-      timing: Number(finalTiming.toFixed(4)),
-      value: finalValue,
-    };
+    const newSteps = steps.map((step, i) => {
+      if (i === idx) {
+        return {
+          timing: Number(tempTimings[i].toFixed(4)),
+          value: finalValue,
+        };
+      }
+      return {
+        ...step,
+        timing: Number(tempTimings[i].toFixed(4)),
+      };
+    });
     onChange(newSteps);
   };
 
@@ -333,6 +374,11 @@ export const SequencerGrid: React.FC<SequencerGridProps> = ({
       const xRight = getX(tRight);
       const y = padding + (1.0 - steps[i].value) * graphHeight;
       
+      if (i === 0 && xLeft > getX(0)) {
+        // Ensure the baseline or initial gate block extends flat/orthogonally from true grid start
+        points.push(`L ${xLeft},${dimensions.height - padding}`);
+      }
+      
       // Horizontal segment across the step width at its value height
       points.push(`L ${xLeft},${y}`);
       points.push(`L ${xRight},${y}`);
@@ -352,7 +398,12 @@ export const SequencerGrid: React.FC<SequencerGridProps> = ({
     const baseVal = 0.0;
     const { y: baseY } = getSvgCoordinatesByTiming(0, baseVal);
 
-    strokePoints.push(`M ${getX(0)},${baseY}`);
+    const firstLeft = getVisualTiming(0);
+    const firstX = getX(firstLeft);
+    const firstY = padding + (1.0 - steps[0].value) * graphHeight;
+
+    // Anchor Node 01 correctly so it tracks flatly at start or shifts vertical trigger phase
+    strokePoints.push(`M ${getX(0)},${firstX > getX(0) ? baseY : firstY}`);
     fillPoints.push(`M ${getX(0)},${baseY}`);
 
     for (let i = 0; i < totalSteps; i++) {
@@ -362,6 +413,11 @@ export const SequencerGrid: React.FC<SequencerGridProps> = ({
       
       const xLeft = getX(tLeft);
       const xRight = getX(tRight);
+
+      if (i === 0 && xLeft > getX(0)) {
+        strokePoints.push(`L ${xLeft},${baseY}`);
+        fillPoints.push(`L ${xLeft},${baseY}`);
+      }
 
       // Draw a vertical step transition to the next trigger value
       const yLeft = padding + (1.0 - triggerVal) * graphHeight;

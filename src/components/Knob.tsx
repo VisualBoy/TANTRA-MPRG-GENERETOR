@@ -11,6 +11,7 @@ interface KnobProps {
   formatValue?: (val: number) => string;
   className?: string;
   color?: string; // Tailwind glow accent
+  disabled?: boolean;
 }
 
 export const Knob: React.FC<KnobProps> = ({
@@ -24,6 +25,7 @@ export const Knob: React.FC<KnobProps> = ({
   formatValue = (v) => v.toFixed(1),
   className = '',
   color = 'orange',
+  disabled = false,
 }) => {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -39,6 +41,7 @@ export const Knob: React.FC<KnobProps> = ({
   const currentAngle = minAngle + normalizedValue * (maxAngle - minAngle);
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (disabled) return;
     e.preventDefault();
     setIsDragging(true);
     dragStartYRef.current = e.clientY;
@@ -46,6 +49,7 @@ export const Knob: React.FC<KnobProps> = ({
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (disabled) return;
     // Only drag with one finger
     if (e.touches.length !== 1) return;
     setIsDragging(true);
@@ -54,6 +58,7 @@ export const Knob: React.FC<KnobProps> = ({
   };
 
   const handleDoubleClick = () => {
+    if (disabled) return;
     onChange(defaultValue);
   };
 
@@ -135,7 +140,7 @@ export const Knob: React.FC<KnobProps> = ({
   const strokeDasharray = circumference;
 
   return (
-    <div className={`flex flex-col items-center select-none ${className}`} id={id}>
+    <div className={`flex flex-col items-center select-none ${disabled ? 'opacity-40' : ''} ${className}`} id={id}>
       {/* Knob Label */}
       <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1.5 leading-none">
         {label}
@@ -147,7 +152,7 @@ export const Knob: React.FC<KnobProps> = ({
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         onDoubleClick={handleDoubleClick}
-        className={`relative w-14 h-14 rounded-full bg-[#0a0f18] border border-[#1b2a41] flex items-center justify-center cursor-ns-resize transition-shadow duration-300 ${isDragging ? 'shadow-[0_0_15px_rgba(255,255,255,0.05)] border-gray-600' : ''}`}
+        className={`relative w-14 h-14 rounded-full bg-[#0a0f18] border border-[#1b2a41] flex items-center justify-center transition-shadow duration-300 ${disabled ? 'cursor-not-allowed' : 'cursor-ns-resize'} ${isDragging ? 'shadow-[0_0_15px_rgba(255,255,255,0.05)] border-gray-600' : ''}`}
       >
         {/* Status indicator ring */}
         <svg className="absolute inset-0 w-full h-full -rotate-90">
@@ -169,14 +174,14 @@ export const Knob: React.FC<KnobProps> = ({
             cy="28"
             r={radius}
             fill="none"
-            stroke={colors.ring}
+            stroke={disabled ? '#1e293b' : colors.ring}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             transform="rotate(135, 28, 28)"
             className="transition-all duration-75"
             style={{
-              filter: `drop-shadow(0 0 3px ${colors.shadow})`,
+              filter: disabled ? 'none' : `drop-shadow(0 0 3px ${colors.shadow})`,
             }}
           />
         </svg>
@@ -193,8 +198,8 @@ export const Knob: React.FC<KnobProps> = ({
           <div
             className="absolute top-1 w-1.5 h-1.5 rounded-full"
             style={{
-              backgroundColor: colors.dot,
-              boxShadow: `0 0 6px ${colors.ring}`,
+              backgroundColor: disabled ? '#475569' : colors.dot,
+              boxShadow: disabled ? 'none' : `0 0 6px ${colors.ring}`,
             }}
           />
         </div>
