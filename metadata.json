@@ -1,0 +1,6 @@
+{
+  "name": "Tantra 2 MPRG Sequencer",
+  "description": "An algorithmic preset generator and interactive visual sequencer panel for the Tantra 2 VST, allowing you to draw sequences and download native .mprg files.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
