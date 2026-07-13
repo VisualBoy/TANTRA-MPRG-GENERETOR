@@ -1,6 +1,10 @@
 # Tantra 2 MPRG Sequencer
 
-An advanced algorithmic preset generator and interactive visual sequencer engineered for the **Tantra 2 VST**. This application enables sound designers and music producers to craft complex, mathematically precise gated and decay sequences, customize them with high-fidelity macro modulations, and export them directly as native `.mprg` files compatible with Tantra 2.
+An advanced algorithmic preset generator and interactive visual sequencer engineered for the **Tantra 2 VST**. 
+
+<img width="1126" height="928" alt="1783951632854(1)" src="https://github.com/user-attachments/assets/742b0df0-7e18-4cf3-b2eb-f61136eda9ee" />
+
+This application enables sound designers and music producers to craft complex, mathematically precise gated and decay sequences, customize them with high-fidelity macro modulations, and export them directly as native `.mprg` files compatible with Tantra 2.
 
 ---
 
